@@ -1,0 +1,246 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "env": {
+    "API_TIMEOUT_MS": "3000000",
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
+    "CLAUDE_AGENT_TEAMS_MUX": "tmux"
+  },
+  "permissions": {
+    "allow": [
+      "Edit",
+      "Write",
+      "NotebookEdit",
+      "TodoWrite",
+      "Skill",
+      "Agent",
+      "TaskCreate",
+      "TaskGet",
+      "TaskList",
+      "TaskOutput",
+      "TaskStop",
+      "TaskUpdate",
+      "ToolSearch",
+      "WebSearch",
+      "WebFetch",
+      "mcp__tavily__*",
+      "Bash(mkdir *)",
+      "Bash(mv *)",
+      "Bash(cp *)",
+      "Bash(touch *)",
+      "Bash(ln -s *)",
+      "Bash(rg *)",
+      "Bash(find *)",
+      "Bash(ls *)",
+      "Bash(cat *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(sed -n *)",
+      "Bash(jq *)",
+      "Bash(chmod +x *)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git diff --cached *)",
+      "Bash(git log *)",
+      "Bash(git branch *)",
+      "Bash(git show *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(go test *)",
+      "Bash(go build *)",
+      "Bash(go vet *)",
+      "Bash(go env *)",
+      "Bash(go list *)",
+      "Bash(pytest *)",
+      "Bash(python -m pytest *)",
+      "Bash(python -m compileall *)",
+      "Bash(uv run *)",
+      "Bash(ruff check *)",
+      "Bash(ruff format --check *)",
+      "Bash(terraform init *)",
+      "Bash(terraform fmt *)",
+      "Bash(terraform validate *)",
+      "Bash(terraform plan *)"
+    ],
+    "deny": [
+      "Read(/.env)",
+      "Read(/.env.*)",
+      "Read(/**/.env)",
+      "Read(/**/.env.*)",
+      "Read(/.envrc)",
+      "Read(/.direnv/**)",
+      "Read(/secrets/**)",
+      "Read(/**/secrets/**)",
+      "Read(/**/.credentials)",
+      "Read(/**/credentials.json)",
+      "Read(/**/credentials/**/*.json)",
+      "Read(/**/*.tfstate)",
+      "Read(/**/*.tfstate.*)",
+      "Read(/**/*.pem)",
+      "Read(/**/*.key)",
+      "Read(/**/private.key)",
+      "Read(/**/service-account*.json)",
+      "Read(~/.ssh/**)",
+      "Read(~/.gnupg/**)",
+      "Read(~/.aws/**)",
+      "Read(~/.kube/config)",
+      "Read(~/.docker/config.json)",
+      "Read(~/.npmrc)",
+      "Read(~/.pypirc)",
+      "Read(~/.netrc)",
+      "Read(~/.config/gcloud/**)",
+      "Read(~/Library/Keychains/**)",
+      "Bash(sudo *)",
+      "Bash(printenv *)",
+      "Bash(env)",
+      "Bash(env *)",
+      "Bash(cat *env*)",
+      "Bash(cat *secret*)",
+      "Bash(cat *credential*)",
+      "Bash(cat *.pem)",
+      "Bash(cat *.key)",
+      "Bash(cat *ssh*)",
+      "Bash(sed *env*)",
+      "Bash(sed *secret*)",
+      "Bash(sed *credential*)",
+      "Bash(sed *.pem)",
+      "Bash(sed *.key)"
+    ],
+    "ask": [
+      "Bash(git push *)",
+      "Bash(terraform apply *)",
+      "Bash(terraform destroy *)",
+      "Bash(terraform import *)",
+      "Bash(docker compose up *)",
+      "Bash(docker compose down *)",
+      "Bash(kubectl apply *)",
+      "Bash(kubectl delete *)",
+      "Bash(ssh *)",
+      "Bash(scp *)",
+      "Bash(npm install *)",
+      "Bash(pip install *)",
+      "Bash(uv pip install *)",
+      "Bash(go install *)",
+      "Bash(brew install *)",
+      "Bash(rm *)",
+      "Bash(unlink *)",
+      "Bash(rmdir *)"
+    ],
+    "defaultMode": "acceptEdits",
+    "disableBypassPermissionsMode": "disable"
+  },
+  "hooks": {
+    "Notification": [
+      {
+        "matcher": "permission_prompt|idle_prompt",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/notify-macos.sh"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/guard-dangerous-bash.sh",
+            "if": "Bash(rm *)"
+          },
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/guard-dangerous-bash.sh",
+            "if": "Bash(git push *)"
+          },
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/guard-dangerous-bash.sh",
+            "if": "Bash(terraform apply *)"
+          },
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/guard-dangerous-bash.sh",
+            "if": "Bash(terraform destroy *)"
+          },
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/guard-dangerous-bash.sh",
+            "if": "Bash(curl *)"
+          },
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/guard-dangerous-bash.sh",
+            "if": "Bash(chmod *)"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|NotebookEdit|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/record-change-context.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/cleanup-change-context.sh"
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline.sh",
+    "padding": 0
+  },
+  "enabledPlugins": {
+    "gopls-lsp@claude-plugins-official": true,
+    "superpowers@claude-plugins-official": true,
+    "code-review@claude-plugins-official": false,
+    "code-simplifier@claude-plugins-official": false,
+    "ralph-loop@claude-plugins-official": false,
+    "commit-commands@claude-plugins-official": true,
+    "pr-review-toolkit@claude-plugins-official": false
+  },
+  "language": "chinese",
+  "skipDangerousModePermissionPrompt": false,
+  "attribution": {
+    "commit": "🤖 Generated with AI\n\nCo-Authored-By: AI <ai@example.com>",
+    "pr": "🤖 Generated with [Claude Code](https://claude.com/claude-code)"
+  },
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true,
+    "excludedCommands": [
+      "git",
+      "gh",
+      "docker",
+      "ssh",
+      "scp",
+      "kubectl",
+      "helm",
+      "gcloud",
+      "terraform"
+    ],
+    "filesystem": {
+      "allowWrite": ["/tmp/"]
+    },
+    "network": {
+      "allowLocalBinding": true,
+      "allowedDomains": ["github.com", "api.github.com", "*.npmjs.org"]
+    },
+    "enableWeakerNetworkIsolation": true
+  }
+}

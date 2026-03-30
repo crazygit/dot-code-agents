@@ -1,0 +1,4 @@
+.claude/settings.local.json
+AGENTS.md
+docs/github-issues/
+scripts/open-github-issue-drafts.sh

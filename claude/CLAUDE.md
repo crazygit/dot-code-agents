@@ -1,0 +1,1 @@
+- 提交代码的 git commit message 只能使用英文描述
