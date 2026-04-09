@@ -81,7 +81,6 @@
       "Read(/**/private.key)",
       "Read(/**/service-account*.json)",
       "Read(~/.ssh/**)",
-      "Read(~/.gnupg/**)",
       "Read(~/.aws/**)",
       "Read(~/.kube/config)",
       "Read(~/.docker/config.json)",
@@ -217,14 +216,16 @@
   "language": "chinese",
   "skipDangerousModePermissionPrompt": false,
   "attribution": {
-    "commit": "🤖 Generated with AI\n\nCo-Authored-By: AI <ai@example.com>",
-    "pr": "🤖 Generated with [Claude Code](https://claude.com/claude-code)"
+    "commit": "",
+    "pr": ""
   },
   "sandbox": {
-    "enabled": true,
+    "_comment": "Disabled: GPG-signed commits require access to ~/.gnupg which conflicts with sandbox filesystem restrictions.",
+    "enabled": false,
     "autoAllowBashIfSandboxed": true,
     "excludedCommands": [
       "git",
+      "gpg",
       "gh",
       "docker",
       "ssh",
@@ -235,7 +236,7 @@
       "terraform"
     ],
     "filesystem": {
-      "allowWrite": ["/tmp/"]
+      "allowWrite": ["/tmp/", "~/.gnupg/"]
     },
     "network": {
       "allowLocalBinding": true,
