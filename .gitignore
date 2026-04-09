@@ -2,3 +2,6 @@
 AGENTS.md
 docs/github-issues/
 scripts/open-github-issue-drafts.sh
+claude/state/change-context/*.json
+codex/superpowers
+docs/

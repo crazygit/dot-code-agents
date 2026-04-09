@@ -1,0 +1,21 @@
+# Versioned Codex baseline template.
+# Copy selected parts into ~/.codex/config.toml and adjust machine-local paths.
+
+personality = "pragmatic"
+web_search = "live"
+model = "gpt-5.4"
+model_reasoning_effort = "medium"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+notify = ["bash", "./scripts/notify-macos.sh"]
+
+[sandbox_workspace_write]
+network_access = true
+
+[tui]
+notifications = true
+notification_method = "auto"
+
+[notice.model_migrations]
+"gpt-5.3-codex" = "gpt-5.4"
+

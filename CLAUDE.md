@@ -16,6 +16,11 @@ dotAgents/                        # 开发项目根目录
 │   ├── commands/                 # 自定义 slash commands (*.md)
 │   ├── rules/                    # 全局规则 (*.md)
 │   └── hooks/                    # hook 脚本 (*.sh)
+├── codex/                        # → ln -s ~/Developer/mine/dotAgents/codex ~/.codex
+│   ├── README.md                 # 当前配置说明与同步方式
+│   ├── AGENTS.md                 # 全局行为规则
+│   ├── config.toml               # 运行参数模板
+│   └── memories/                 # 长期偏好模板
 ```
 
 **使用方式：**
@@ -23,6 +28,13 @@ dotAgents/                        # 开发项目根目录
 ```bash
 mv ~/.claude ~/.claude.bak
 ln -s "${PWD}/claude" ~/.claude
+```
+
+Codex 使用方式：
+
+```bash
+mv ~/.codex ~/.codex.bak
+ln -s "${PWD}/codex" ~/.codex
 ```
 
 ## 核心规则
@@ -36,6 +48,7 @@ npx ctx7@latest docs /websites/code_claude "<查询内容>"
 ```
 
 当前配置说明和使用入口见 [claude/README.md](claude/README.md)。
+Codex 配置说明和同步入口见 [codex/README.md](codex/README.md)。
 
 ## Git 规范
 
@@ -45,6 +58,6 @@ npx ctx7@latest docs /websites/code_claude "<查询内容>"
 ## 工作流
 
 1. **查询文档**：使用 context7 获取最新官方文档
-2. **验证结构**：参照 `claude/` 下现有同类文件和 [claude/README.md](claude/README.md) 保持结构一致
+2. **验证结构**：参照 `claude/` 或 `codex/` 下现有同类文件和对应 README 保持结构一致
 3. **编写配置**：按最佳实践编写 skill/agent/hook/MCP 配置
 4. **测试验证**：确保配置可被 Claude Code 正确识别和加载

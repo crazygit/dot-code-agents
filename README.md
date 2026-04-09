@@ -7,7 +7,7 @@
 | Agent       | 配置目录  | 软链接目标  |
 | ----------- | --------- | ----------- |
 | Claude Code | `claude/` | `~/.claude` |
-| ...         |           |             |
+| Codex       | `codex/`  | `~/.codex` |
 
 ## 快速开始
 
@@ -20,6 +20,16 @@ ln -s "${PWD}/claude" ~/.claude
 
 # 3. 重启 Claude Code 会话，配置自动生效
 ```
+
+Codex 可以像 Claude 一样整目录软链接到 `~/.codex`：
+
+```bash
+mv ~/.codex ~/.codex.bak
+ln -s "${PWD}/codex" ~/.codex
+```
+
+仓库已排除 Codex 运行过程中生成的本地文件，例如 `auth.json`、history、sqlite、
+日志、快照和缓存；日常维护时只需要关注明确管理的配置文件。
 
 ## 目录结构
 
@@ -34,6 +44,11 @@ dotAgents/
 │   ├── commands/                 #   自定义 slash commands
 │   ├── rules/                    #   全局规则
 │   └── hooks/                    #   hook 脚本
+├── codex/                        # Codex 全局配置 → ~/.codex
+│   ├── README.md                 #   当前配置说明与同步方式
+│   ├── AGENTS.md                 #   全局行为规则
+│   ├── config.toml               #   共享运行参数
+│   └── memories/                 #   长期偏好模板
 ├── CLAUDE.md                     # 本项目自身的开发指南
 └── README.md                     # 本文件
 ```
