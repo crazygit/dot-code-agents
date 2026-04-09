@@ -13,7 +13,7 @@
 - `settings.json`：全局配置入口，包含权限、hooks、状态栏、插件开关、沙箱策略
 - `CLAUDE.md`：全局规则，目前约束 git commit message 必须使用英文
 - `agents/`：本地子 agent
-- `commands/`：自定义 slash commands
+- `commands/`：已弃用，自定义命令已迁移到 skills 体系
 - `skills/`：本地 skills
 - `hooks/`：hook 脚本
 - `rules/`：共享规则
@@ -27,30 +27,6 @@
   适合在本地功能完成后，对当前改动做风险导向的代码审查。
   重点关注正确性、安全性、回归风险和可维护性。
 
-- `code-debugger`
-  适合排查构建失败、测试失败、依赖异常、脚本报错、环境不一致等工程问题。
-  覆盖 Go、Python、Bash 和通用工程排障。
-
-### Commands
-
-- `review`
-  审查当前变更或指定范围，输出按严重程度排序的问题。
-
-- `commit`
-  辅助本地提交，读取当前 diff，生成英文 Conventional Commit 风格提交信息。
-
-- `go-test`
-  运行 Go 测试和基础校验，优先覆盖当前修改范围。
-
-- `python-test`
-  运行 Python 测试和基础校验，兼容 `uv` 和 `pytest` 工作流。
-
-- `terraform-validate`
-  运行 Terraform 格式和基础验证。
-
-- `terraform-plan`
-  在格式化和验证之后生成 Terraform plan，供人工审阅。
-
 ### Skills
 
 - `find-docs`
@@ -62,8 +38,23 @@
   重点关注配置收敛、官方优先、安全默认、模板化管理。
 
 - `issue-dev`
-  Issue 驱动开发工作流。以 GitHub Issue 为任务入口，串联 superpowers 实现需求澄清 → Issue 创建 → 并行实现 → PR 关联的完整闭环。
-  适合所有功能开发和 bug 修复场景。详见 [按场景使用](#8-issue-驱动的并行开发)。
+  Issue 驱动开发的编排器。串联 create-issue、pick-issue、issue-status、commit、create-pr 等 skill，配合 Superpowers 工作流完成从需求到 PR 的全流程。
+  适合所有功能开发和 bug 修复场景。详见 [按场景使用](#8-issue-驱动的开发)。
+
+- `create-issue`
+  从对话上下文提取需求，按类型选择模板，通过 `gh issue create --web` 让用户在浏览器审核提交。
+
+- `pick-issue`
+  接手已有 GitHub Issue：读取解析内容、创建 worktree 和分支、生成 kickoff 草稿。
+
+- `issue-status`
+  汇总仓库 Issue/PR 状态，按统一状态模型分类输出，按需生成评论草稿。
+
+- `commit`
+  智能 Git 提交。自动分析变更、建议拆分、运行 pre-commit 检查。
+
+- `create-pr`
+  从 feature 分支出发，经测试/lint、code review、Issue 合规检查后，用 `gh pr create --web` 创建 PR。
 
 - `db9`
   外部数据库相关 skill，属于特定场景能力，不作为通用开发基线。
@@ -78,7 +69,7 @@
 
 已禁用的 plugins：
 
-- `code-review@claude-plugins-official` — 与本地 `code-reviewer` agent 和 `/review` command 职责重叠
+- `code-review@claude-plugins-official` — 与本地 `code-review` agent 职责重叠
 - `code-simplifier@claude-plugins-official` — 与 pr-review-toolkit 中的同名 agent 重叠，使用频率低
 - `ralph-loop@claude-plugins-official` — 与内置 `/loop` skill 功能重叠
 - `pr-review-toolkit@claude-plugins-official` — 包含 6 个子 agent，重量过大，按需手动调用更可控
@@ -86,7 +77,7 @@
 使用原则：
 
 - plugin 用于补充不可替代的结构化工作流能力
-- 本地 review 优先使用 `code-reviewer` agent 或 `/review` command
+- 本地 review 优先使用 `code-review` agent
 - 如果某项能力已经能由 command、agent 或 skill 清晰覆盖，不叠加更多 plugin
 
 ### Hooks
@@ -114,73 +105,17 @@
 
 推荐顺序：
 
-1. 用 `code-reviewer` 或 `/review` 审查当前改动
+1. 用 `code-review` 审查当前改动
 2. 修掉阻塞问题
-3. 跑对应语言的测试命令
-4. 最后再用 `/commit` 做本地提交
+3. 跑对应语言的测试命令（`go test`, `pytest`, `terraform validate` 等已在权限白名单中）
+4. 最后用 `/commit` 做本地提交
 
 适用入口：
 
-- 想要一个专门审查角色时：`code-reviewer`
-- 想要固定化、一键化流程时：`/review`
+- 想要一个专门审查角色时：`code-review`
 - 想看 PR 相关增强能力时：相关 review plugin 作为补充，不替代本地 review 基线
 
-### 2. 构建失败、测试失败、脚本报错
-
-优先使用 `code-debugger`。
-
-适用情况：
-
-- Go / Python 项目测试失败
-- shell 脚本执行异常
-- 依赖、环境、导入或工具链配置有问题
-- 不确定是代码问题还是环境问题
-
-推荐搭配：
-
-- Go 项目再配合 `/go-test`
-- Python 项目再配合 `/python-test`
-
-### 3. Go 开发
-
-推荐用法：
-
-1. 修改代码
-2. 用 `code-reviewer` 做一次改动审查
-3. 用 `/go-test` 跑最小必要测试
-4. 需要排障时交给 `code-debugger`
-5. 最后用 `/commit`
-
-相关能力：
-
-- `gopls-lsp` plugin 提供语言服务支持
-- `/go-test` 负责高频验证动作
-
-### 4. Python 开发
-
-推荐用法：
-
-1. 修改代码
-2. 用 `code-reviewer` 做 review
-3. 用 `/python-test` 运行测试或基础校验
-4. 有环境或依赖问题时用 `code-debugger`
-5. 最后用 `/commit`
-
-### 5. Terraform 开发
-
-推荐用法：
-
-1. 修改 Terraform 配置
-2. 先执行 `/terraform-validate`
-3. 需要评估变更时执行 `/terraform-plan`
-4. 对 plan 中的高风险替换或销毁做人工审阅
-
-安全边界：
-
-- `terraform apply`、`terraform destroy` 默认需要确认
-- `terraform destroy` 和 `terraform apply -auto-approve` 还会被 hook 额外拦截
-
-### 6. 查官方文档或最新 API
+### 2. 查官方文档或最新 API
 
 优先使用 `find-docs`。
 
@@ -209,30 +144,27 @@
 - 模板优先于硬编码成品
 - 安全默认，不提交凭据
 
-### 8. Issue 驱动的并行开发
+### 3. Issue 驱动的开发
 
-优先使用 `issue-dev`。
+`issue-dev` 是编排器，串联以下独立 skill 完成全流程：
 
-用法：
+- `/issue-dev <需求描述>` — 模式 A：brainstorming → create-issue → 执行
+- `/issue-dev #N` — 模式 B：pick-issue → plan → 实现 → commit → create-pr
+- `/issue-dev status` — 模式 C：issue-status 查看进度
 
-- `/issue-dev <需求描述>` — 从需求出发：澄清 → 建 Issue → 执行
-- `/issue-dev #N` — 拾取单个已有 Issue 并执行
-- `/issue-dev #N #M #K` — 拾取多个 Issue，并行派发执行
-- `/issue-dev status` — 查看当前 Issue/PR 进度概览
-- `/issue-dev list` — 列出 open Issues
+也可以单独使用各 skill：
 
-工作流：
-
-1. 主 agent 澄清需求（brainstorming）
-2. 拆分为 Issue（1 Issue = 1 可交付任务）
-3. 多 Issue 通过 Agent Teams 并行执行（独立 worktree）
-4. 每个 Issue 完成后提 PR（`Fixes #N`）
-5. 用户确认 PR → 合并 → Issue 自动关闭
+- `/create-issue` — 创建 Issue
+- `/pick-issue #N` — 接手 Issue 并创建工作区
+- `/issue-status` — 查看状态汇总
+- `/commit` — 提交代码
+- `/create-pr` — 创建 PR
 
 核心原则：
 
 - 没有 Issue 不开工
-- PR 必须关联 Issue
+- PR 必须关联 Issue（`Fixes #N`）
+- 所有 GitHub 写操作和 git push 必须人工确认
 - 大功能用 Milestone 聚合
 
 前置条件：
@@ -297,8 +229,8 @@ macOS 额外兼容项：
 ### 本地开发
 
 1. 写代码
-2. `code-reviewer` 或 `/review`
-3. `/go-test`、`/python-test` 或 Terraform commands
+2. `code-review` 审查
+3. 对应语言测试命令（`go test`、`pytest`、`terraform validate` 等）
 4. `/commit`
 5. 需要推远端时再人工确认 `git push`
 
