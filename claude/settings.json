@@ -107,6 +107,12 @@
     ],
     "ask": [
       "Bash(git push *)",
+      "Bash(gh issue create *)",
+      "Bash(gh pr create *)",
+      "Bash(npm install *)",
+      "Bash(pip install *)",
+      "Bash(uv pip install *)",
+      "Bash(go install *)",
       "Bash(terraform apply *)",
       "Bash(terraform destroy *)",
       "Bash(terraform import *)",
@@ -116,10 +122,6 @@
       "Bash(kubectl delete *)",
       "Bash(ssh *)",
       "Bash(scp *)",
-      "Bash(npm install *)",
-      "Bash(pip install *)",
-      "Bash(uv pip install *)",
-      "Bash(go install *)",
       "Bash(brew install *)",
       "Bash(rm *)",
       "Bash(unlink *)",
@@ -148,11 +150,6 @@
             "type": "command",
             "command": "$HOME/.claude/hooks/guard-dangerous-bash.sh",
             "if": "Bash(rm *)"
-          },
-          {
-            "type": "command",
-            "command": "$HOME/.claude/hooks/guard-dangerous-bash.sh",
-            "if": "Bash(git push *)"
           },
           {
             "type": "command",
