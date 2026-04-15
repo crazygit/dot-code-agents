@@ -1,6 +1,7 @@
 .DS_Store
 auth.json
 history.jsonl
+installation_id
 models_cache.json
 session_index.jsonl
 version.json
