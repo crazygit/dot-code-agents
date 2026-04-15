@@ -7,6 +7,7 @@ argument-hint: "[简要描述（可选）]"
 disable-model-invocation: false
 allowed-tools:
   - Read
+  - Write
   - Glob
   - Grep
   - AskUserQuestion
@@ -15,6 +16,7 @@ allowed-tools:
   - Bash(gh issue create --web *)
   - Bash(gh issue create *)
   - Bash(mktemp *)
+  - Bash(rm *)
 ---
 
 创建 GitHub Issue。优先从当前对话上下文中提取和整理需求信息，`$ARGUMENTS` 作为补充说明（可选）。
@@ -53,7 +55,7 @@ allowed-tools:
 
 ### 5. 起草 Issue
 
-根据确认后的需求（manual）或收集的需求信息（auto），按类型选择 `references/templates.md` 中对应模板，填充内容后写入临时文件。标题使用中文，不加前缀。类型与 label 的映射：
+根据确认后的需求（manual）或收集的需求信息（auto），按类型选择 `references/templates.md` 中对应模板，填充内容后写入临时文件。优先使用 `Write` 写入 `mktemp` 创建的临时文件，避免依赖 shell 重定向。标题使用中文，不加前缀。类型与 label 的映射：
 - 新功能 → `enhancement`
 - 缺陷修复 → `bug`
 - 代码重构 → `refactor`
@@ -68,12 +70,12 @@ allowed-tools:
 执行以下命令：
 ```bash
 TMPFILE=$(mktemp /tmp/issue-draft.XXXXXX.md)
-trap 'rm -f "$TMPFILE"' EXIT
-# 将起草的 Issue 内容写入 $TMPFILE
+# 使用 Write 将起草的 Issue 内容写入 $TMPFILE
 gh issue create --web --title "..." --label "..." --body-file "$TMPFILE"
+rm -f "$TMPFILE"
 ```
 
-使用 `--web` 让用户在浏览器中审核后手动提交，临时文件在 shell 退出时自动清理。
+使用 `--web` 让用户在浏览器中审核后手动提交，命令结束后清理临时文件。
 
 创建完成后，提示用户："Issue 创建完成后，请继续 `/issue-flow #<编号>` 以进入下一步。"
 
@@ -81,7 +83,10 @@ gh issue create --web --title "..." --label "..." --body-file "$TMPFILE"
 
 直接执行：
 ```bash
+TMPFILE=$(mktemp /tmp/issue-draft.XXXXXX.md)
+# 使用 Write 将起草的 Issue 内容写入 $TMPFILE
 gh issue create --title "..." --label "..." --body-file "$TMPFILE"
+rm -f "$TMPFILE"
 ```
 
 捕获输出中的 Issue URL，解析出 Issue 编号，并输出：

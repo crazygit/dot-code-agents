@@ -9,7 +9,8 @@ allowed-tools:
   - Bash(git worktree list)
   - Bash(git worktree remove *)
   - Bash(git branch *)
-  - Bash(rm -rf *)
+  - Bash(git status *)
+  - Bash(rm *)
   - AskUserQuestion
   - Skill(superpowers:finishing-a-development-branch)
 ---
@@ -62,7 +63,7 @@ git worktree remove <path>
 无论 manual 还是 auto，在收尾完成后删除 `.issue-flow/` 目录：
 
 ```bash
-rm -rf .issue-flow
+rm -r .issue-flow
 ```
 
 ### 5. 输出
@@ -80,5 +81,6 @@ rm -rf .issue-flow
 - 不自动 merge PR
 - 不自动删除已推送到远端的 branch（默认保留）
 - `.issue-flow/` 在 `finished` 后必须清理
+- 删除时仅清理当前 worktree 根目录下的 `.issue-flow/`，不要泛化到其他路径
 - worktree 移除前确认没有未保存的更改
 - 如有未提交且未 push 的重要更改，先提醒用户

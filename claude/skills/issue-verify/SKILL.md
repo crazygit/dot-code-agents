@@ -6,6 +6,7 @@ description: >-
 disable-model-invocation: false
 allowed-tools:
   - Read
+  - Write
   - Glob
   - Grep
   - AskUserQuestion

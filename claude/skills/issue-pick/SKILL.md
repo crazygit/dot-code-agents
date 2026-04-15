@@ -7,6 +7,7 @@ argument-hint: "<Issue 编号>（如 #123）"
 disable-model-invocation: false
 allowed-tools:
   - Read
+  - Write
   - Glob
   - Grep
   - AskUserQuestion
@@ -61,19 +62,18 @@ allowed-tools:
 
 ### 5. 初始化 .issue-flow 上下文
 
-进入 worktree 根目录后，执行：
+进入 worktree 根目录后：
 
-```bash
-mkdir -p .issue-flow
+1. 使用 `Bash(mkdir *)` 创建 `.issue-flow/`
+2. 使用 `Write` 写入 `.issue-flow/issue.json`，内容为：
 
-cat > .issue-flow/issue.json <<'EOF'
+```json
 {
   "number": <N>,
   "title": "<Issue标题>",
   "url": "<Issue URL>",
   "type": "<feature|fix|refactor|chore|docs|perf>"
 }
-EOF
 ```
 
 > `issue-pick` **不修改 `.issue-flow/state`**，状态由 `issue-flow` 编排器统一维护。

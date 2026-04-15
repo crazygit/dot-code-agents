@@ -7,6 +7,7 @@ argument-hint: ""
 disable-model-invocation: false
 allowed-tools:
   - Read
+  - Write
   - Glob
   - Grep
   - AskUserQuestion
@@ -14,6 +15,7 @@ allowed-tools:
   - Bash(echo *)
   - Bash(mkdir *)
   - Bash(date *)
+  - Bash(gh issue view *)
   - Skill(superpowers:writing-plans)
 ---
 
@@ -54,10 +56,10 @@ allowed-tools:
 
 ### 5. 记录 plan 路径
 
-获取生成的 plan 文件路径，写入 `.issue-flow/plan-path`：
+获取生成的 plan 文件路径后，使用 `Write` 写入 `.issue-flow/plan-path`，文件内容仅包含一行：
 
-```bash
-echo "<plan-file-path>" > .issue-flow/plan-path
+```text
+<plan-file-path>
 ```
 
 ### 6. 模式处理

@@ -7,6 +7,7 @@ argument-hint: "[Issue 编号]（可选，默认自动推断）"
 disable-model-invocation: false
 allowed-tools:
   - Read
+  - Write
   - Glob
   - Grep
   - AskUserQuestion
@@ -22,6 +23,8 @@ allowed-tools:
   - Bash(gh pr create *)
   - Bash(gh pr list --head *)
   - Bash(gh issue view --comments *)
+  - Bash(mktemp *)
+  - Bash(rm *)
 ---
 
 创建 PR。该 skill 只负责 PR 草稿和创建，不负责测试、review、commit、push 或分支收尾。
@@ -69,7 +72,7 @@ allowed-tools:
 
 ### 5. 起草 PR 内容
 
-1. 根据 `references/templates.md` 中的 PR 模板起草内容，写入临时文件
+1. 根据 `references/templates.md` 中的 PR 模板起草内容，优先使用 `Write` 写入 `mktemp` 创建的临时文件，避免依赖 shell 重定向
 2. PR 标题概括当前分支的最终交付内容
 3. 如果已关联 Issue，在正文中加入 `Closes #N`
 4. 变更说明必须严格来源于 `git diff`、提交记录和 Issue 内容，不编造
@@ -82,18 +85,21 @@ allowed-tools:
 2. 运行以下命令：
    ```bash
    TMPFILE=$(mktemp /tmp/pr-draft.XXXXXX.md)
-   trap 'rm -f "$TMPFILE"' EXIT
-   # 将 PR body 写入 $TMPFILE
+   # 使用 Write 将 PR body 写入 $TMPFILE
    gh pr create --web --title "..." --body-file "$TMPFILE"
+   rm -f "$TMPFILE"
    ```
 3. 使用 `--web` 让用户在浏览器中审核后手动提交
-4. 临时文件在 shell 退出时自动清理
+4. 命令结束后清理临时文件
 
 #### Auto 模式
 
 直接执行：
 ```bash
+TMPFILE=$(mktemp /tmp/pr-draft.XXXXXX.md)
+# 使用 Write 将 PR body 写入 $TMPFILE
 gh pr create --title "..." --body-file "$TMPFILE"
+rm -f "$TMPFILE"
 ```
 
 捕获并输出 PR URL。

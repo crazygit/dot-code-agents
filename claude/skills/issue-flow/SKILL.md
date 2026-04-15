@@ -8,17 +8,25 @@ argument-hint: "[<需求描述> | #<Issue编号> | --auto ...]"
 disable-model-invocation: false
 allowed-tools:
   - Read
+  - Write
   - Glob
   - Grep
   - AskUserQuestion
   - Bash(git remote -v)
   - Bash(git rev-parse --is-inside-work-tree)
+  - Bash(git status *)
+  - Bash(git branch *)
+  - Bash(git worktree *)
   - Bash(gh auth status *)
   - Bash(gh repo view *)
   - Bash(gh issue view *)
+  - Bash(gh issue create *)
+  - Bash(gh pr create *)
   - Bash(mkdir *)
   - Bash(echo *)
   - Bash(cat *)
+  - Bash(date *)
+  - Bash(rm *)
   - Bash(pwd)
   - Skill(issue-brainstorm)
   - Skill(issue-create)
