@@ -1,13 +1,13 @@
-# dotAgents - 个人 AI Code Agent 配置库
+# dotCodeAgents - 个人 AI Code Agent 配置库
 
 本仓库用于管理个人 AI Code Agent 使用习惯、配置和扩展，包括 skills、MCP servers、hooks、sub-agents 等。
 
 ## 目录结构
 
 ```
-dotAgents/                        # 开发项目根目录
+dot-code-agents/                  # 开发项目根目录
 ├── CLAUDE.md                     # 本文件 - 项目自身的开发指南
-├── claude/                       # → ln -s ~/Developer/mine/dotAgents/claude ~/.claude
+├── claude/                       # claude code 配置
 │   ├── README.md                 # 当前配置说明与使用方式
 │   ├── CLAUDE.md                 # 全局指令
 │   ├── settings.json             # 全局 settings（hooks, MCP, 权限等）
@@ -16,7 +16,7 @@ dotAgents/                        # 开发项目根目录
 │   ├── commands/                 # 自定义 slash commands (*.md)
 │   ├── rules/                    # 全局规则 (*.md)
 │   └── hooks/                    # hook 脚本 (*.sh)
-├── codex/                        # → ln -s ~/Developer/mine/dotAgents/codex ~/.codex
+├── codex/                        # codex 配置
 │   ├── README.md                 # 当前配置说明与同步方式
 │   ├── AGENTS.md                 # 全局行为规则
 │   ├── config.toml               # 运行参数模板

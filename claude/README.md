@@ -37,24 +37,37 @@
   用于维护当前仓库的 Claude Code 配置基线。
   重点关注配置收敛、官方优先、安全默认、模板化管理。
 
-- `issue-dev`
-  Issue 驱动开发的编排器。串联 create-issue、pick-issue、issue-status、commit、create-pr 等 skill，配合 Superpowers 工作流完成从需求到 PR 的全流程。
-  适合所有功能开发和 bug 修复场景。详见 [按场景使用](#8-issue-驱动的开发)。
+- `issue-flow`
+  Issue 驱动开发的编排器。通过 `.issue-flow/` 状态机管理全流程，支持 manual/auto 两种模式。
+  串联 brainstorm、create、pick、plan、implement、verify、commit、pr、finish 九个子 skill。
+  适合所有功能开发和 bug 修复场景。详见 [按场景使用](#3-issue-驱动的开发)。
 
-- `create-issue`
-  从对话上下文提取需求，按类型选择模板，通过 `gh issue create --web` 让用户在浏览器审核提交。
+- `issue-brainstorm`
+  将用户想法或需求通过调研和结构化讨论，整理成可用于创建 Issue 的 design spec。
 
-- `pick-issue`
-  接手已有 GitHub Issue：读取解析内容、创建 worktree 和分支、生成 kickoff 草稿。
+- `issue-create`
+  从上下文提取需求，按类型选择模板，创建 GitHub Issue。manual 模式用 `--web` 审核，auto 模式直接创建。
 
-- `issue-status`
-  汇总仓库 Issue/PR 状态，按统一状态模型分类输出，按需生成评论草稿。
+- `issue-pick`
+  接手已有 GitHub Issue：读取解析内容、创建 worktree 和分支、初始化 `.issue-flow/` 上下文。
 
-- `commit`
-  智能 Git 提交。自动分析变更、建议拆分、运行 pre-commit 检查。
+- `issue-plan`
+  基于 Issue 生成实现计划，保存到 `.issue-flow/plan-path`。
 
-- `create-pr`
-  从 feature 分支出发，经测试/lint、code review、Issue 合规检查后，用 `gh pr create --web` 创建 PR。
+- `issue-implement`
+  读取 `.issue-flow/plan-path`，调用 subagent-driven-development 执行实现计划。
+
+- `issue-verify`
+  运行 test + lint，调用 code review，比对 Issue 验收标准，输出验证报告。失败时自动修复并重试。
+
+- `issue-commit`
+  智能 Git 提交。Conventional Commit + Emoji 格式，自动分析变更、建议拆分、关联 Issue。
+
+- `issue-pr`
+  创建 Pull Request。manual 模式用 `--web` 审核，auto 模式直接创建。
+
+- `issue-finish`
+  清理 worktree/分支，删除 `.issue-flow/` 状态目录。
 
 - `db9`
   外部数据库相关 skill，属于特定场景能力，不作为通用开发基线。
@@ -65,10 +78,10 @@
 
 - `gopls-lsp@claude-plugins-official` — Go 语言服务支持
 - `superpowers@claude-plugins-official` — 核心工作流编排（brainstorming, TDD, debugging, plans 等）
-- `commit-commands@claude-plugins-official` — `/commit`、`/commit-push-pr`、`/clean_gone`
 
 已禁用的 plugins：
 
+- `commit-commands@claude-plugins-official` — `/commit` 与 `issue-commit` 功能重叠，`/commit-push-pr` 跳过验证阶段与工作流原则冲突
 - `code-review@claude-plugins-official` — 与本地 `code-review` agent 职责重叠
 - `code-simplifier@claude-plugins-official` — 与 pr-review-toolkit 中的同名 agent 重叠，使用频率低
 - `ralph-loop@claude-plugins-official` — 与内置 `/loop` skill 功能重叠
@@ -108,7 +121,7 @@
 1. 用 `code-review` 审查当前改动
 2. 修掉阻塞问题
 3. 跑对应语言的测试命令（`go test`, `pytest`, `terraform validate` 等已在权限白名单中）
-4. 最后用 `/commit` 做本地提交
+4. 最后用 `/issue-commit` 做本地提交
 
 适用入口：
 
@@ -127,7 +140,7 @@
 
 这里不建议让 agent 凭经验直接回答，`rules/context7.md` 已经要求这类问题优先走 `ctx7`。
 
-### 7. 维护这套 Claude 配置
+### 4. 维护这套 Claude 配置
 
 优先使用 `config-curator`。
 
@@ -146,26 +159,31 @@
 
 ### 3. Issue 驱动的开发
 
-`issue-dev` 是编排器，串联以下独立 skill 完成全流程：
+`issue-flow` 是编排器，通过 `.issue-flow/` 状态机串联以下子 skill：
 
-- `/issue-dev <需求描述>` — 模式 A：brainstorming → create-issue → 执行
-- `/issue-dev #N` — 模式 B：pick-issue → plan → 实现 → commit → create-pr
-- `/issue-dev status` — 模式 C：issue-status 查看进度
+- `/issue-flow <需求描述>` — 模式 A：brainstorm → create → pick → plan → implement → verify → commit → pr → finish
+- `/issue-flow #N` — 模式 B：pick → plan → implement → verify → commit → pr → finish
+- `/issue-flow --auto <需求描述>` — auto 模式，连续自动推进全流程
+- `/issue-flow` — 模式 C：恢复已有会话，从 `.issue-flow/state` 继续
 
-也可以单独使用各 skill：
+各 skill 也可单独使用：
 
-- `/create-issue` — 创建 Issue
-- `/pick-issue #N` — 接手 Issue 并创建工作区
-- `/issue-status` — 查看状态汇总
-- `/commit` — 提交代码
-- `/create-pr` — 创建 PR
+- `/issue-brainstorm` — 需求头脑风暴
+- `/issue-create` — 创建 Issue
+- `/issue-pick #N` — 接手 Issue 并创建工作区
+- `/issue-plan` — 生成实现计划
+- `/issue-implement` — 执行计划
+- `/issue-verify` — 验收验证
+- `/issue-commit` — 提交代码
+- `/issue-pr` — 创建 PR
+- `/issue-finish` — 清理收尾
 
 核心原则：
 
 - 没有 Issue 不开工
-- PR 必须关联 Issue（`Fixes #N`）
-- 所有 GitHub 写操作和 git push 必须人工确认
-- 大功能用 Milestone 聚合
+- PR 必须关联 Issue（`Closes #N`）
+- manual 模式下所有 GitHub 写操作和 git push 必须人工确认
+- 状态由 `issue-flow` 编排器统一维护，子 skill 不写 state
 
 前置条件：
 
@@ -231,7 +249,7 @@ macOS 额外兼容项：
 1. 写代码
 2. `code-review` 审查
 3. 对应语言测试命令（`go test`、`pytest`、`terraform validate` 等）
-4. `/commit`
+4. `/issue-commit`
 5. 需要推远端时再人工确认 `git push`
 
 ### 配置维护

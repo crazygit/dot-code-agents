@@ -1,6 +1,6 @@
 # Issue 模板
 
-这些模板用于 `issue-dev` 中的 Issue 草稿准备。
+这些模板用于 `issue-flow` 中的 Issue 草稿准备。
 
 原则：
 

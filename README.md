@@ -7,7 +7,7 @@
 | Agent       | 配置目录  | 软链接目标  |
 | ----------- | --------- | ----------- |
 | Claude Code | `claude/` | `~/.claude` |
-| Codex       | `codex/`  | `~/.codex` |
+| Codex       | `codex/`  | `~/.codex`  |
 
 ## 快速开始
 
@@ -34,7 +34,7 @@ ln -s "${PWD}/codex" ~/.codex
 ## 目录结构
 
 ```
-dotAgents/
+dot-code-agents/
 ├── claude/                       # Claude Code 全局配置 → ~/.claude
 │   ├── README.md                 #   当前配置说明与使用方式
 │   ├── CLAUDE.md                 #   全局指令

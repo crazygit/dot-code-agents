@@ -6,6 +6,10 @@
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
     "CLAUDE_AGENT_TEAMS_MUX": "tmux"
   },
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
   "permissions": {
     "allow": [
       "Edit",
@@ -29,6 +33,7 @@
       "Bash(cp *)",
       "Bash(touch *)",
       "Bash(ln -s *)",
+      "Bash(mktemp *)",
       "Bash(rg *)",
       "Bash(find *)",
       "Bash(ls *)",
@@ -46,16 +51,35 @@
       "Bash(git show *)",
       "Bash(git add *)",
       "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(gh auth status *)",
+      "Bash(gh issue create *)",
+      "Bash(gh issue edit *)",
+      "Bash(gh issue comment *)",
+      "Bash(gh issue close *)",
+      "Bash(gh issue view *)",
+      "Bash(gh pr create *)",
+      "Bash(gh pr list *)",
+      "Bash(gh pr view *)",
+      "Bash(gh repo view *)",
+      "Bash(npm test *)",
+      "Bash(npm run *)",
+      "Bash(npx *)",
       "Bash(go test *)",
       "Bash(go build *)",
       "Bash(go vet *)",
       "Bash(go env *)",
       "Bash(go list *)",
+      "Bash(cargo test *)",
+      "Bash(cargo clippy *)",
       "Bash(pytest *)",
+      "Bash(python *)",
       "Bash(python -m pytest *)",
       "Bash(python -m compileall *)",
       "Bash(uv run *)",
+      "Bash(uv pip install *)",
       "Bash(ruff check *)",
+      "Bash(ruff format *)",
       "Bash(ruff format --check *)",
       "Bash(terraform init *)",
       "Bash(terraform fmt *)",
@@ -106,12 +130,8 @@
       "Bash(sed *.key)"
     ],
     "ask": [
-      "Bash(git push *)",
-      "Bash(gh issue create *)",
-      "Bash(gh pr create *)",
       "Bash(npm install *)",
       "Bash(pip install *)",
-      "Bash(uv pip install *)",
       "Bash(go install *)",
       "Bash(terraform apply *)",
       "Bash(terraform destroy *)",
@@ -207,19 +227,28 @@
     "code-review@claude-plugins-official": false,
     "code-simplifier@claude-plugins-official": false,
     "ralph-loop@claude-plugins-official": false,
-    "commit-commands@claude-plugins-official": true,
+    "commit-commands@claude-plugins-official": false,
     "pr-review-toolkit@claude-plugins-official": false
   },
   "language": "chinese",
-  "skipDangerousModePermissionPrompt": false,
-  "attribution": {
-    "commit": "",
-    "pr": ""
-  },
   "sandbox": {
-    "_comment": "Disabled: GPG-signed commits require access to ~/.gnupg which conflicts with sandbox filesystem restrictions.",
     "enabled": false,
     "autoAllowBashIfSandboxed": true,
+    "network": {
+      "allowedDomains": [
+        "github.com",
+        "api.github.com",
+        "*.npmjs.org"
+      ],
+      "allowLocalBinding": true
+    },
+    "filesystem": {
+      "allowWrite": [
+        "/tmp/",
+        "~/.gnupg/"
+      ]
+    },
+    "enableWeakerNetworkIsolation": true,
     "excludedCommands": [
       "git",
       "gpg",
@@ -232,13 +261,7 @@
       "gcloud",
       "terraform"
     ],
-    "filesystem": {
-      "allowWrite": ["/tmp/", "~/.gnupg/"]
-    },
-    "network": {
-      "allowLocalBinding": true,
-      "allowedDomains": ["github.com", "api.github.com", "*.npmjs.org"]
-    },
-    "enableWeakerNetworkIsolation": true
-  }
+    "_comment": "Disabled: GPG-signed commits require access to ~/.gnupg which conflicts with sandbox filesystem restrictions."
+  },
+  "skipDangerousModePermissionPrompt": false
 }

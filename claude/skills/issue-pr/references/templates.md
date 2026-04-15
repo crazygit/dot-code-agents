@@ -31,4 +31,11 @@ Closes #<N>
 {升级指南、Breaking Changes、兼容性问题等；没有可写"无"}
 ```
 
+附加规范：
+
+- PR title 使用英文 Conventional Commits
+- PR body 使用中文描述变更
+- 关联 Issue 时使用 `Closes #<N>`
+- 本地开发中的 commit 如需关联 Issue，使用 `Refs #<N>`，不要使用 `Closes/Fixes #<N>`
+
 如果未能关联 Issue，省略"关联 Issue"和"验收标准覆盖"两个 section。

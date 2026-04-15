@@ -5,3 +5,4 @@ scripts/open-github-issue-drafts.sh
 claude/state/change-context/*.json
 codex/superpowers
 docs/
+claude/skills/lark-*
