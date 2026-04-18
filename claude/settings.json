@@ -235,7 +235,16 @@
     "code-simplifier@claude-plugins-official": false,
     "ralph-loop@claude-plugins-official": false,
     "commit-commands@claude-plugins-official": false,
-    "pr-review-toolkit@claude-plugins-official": false
+    "pr-review-toolkit@claude-plugins-official": false,
+    "issue-flow@issue-flow-marketplace": true
+  },
+  "extraKnownMarketplaces": {
+    "issue-flow-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "crazygit/issue-flow"
+      }
+    }
   },
   "language": "chinese",
   "sandbox": {
