@@ -59,7 +59,10 @@ ln -s "${PWD}/codex" ~/.codex
 cd agents/
 ./setup.sh
 
-# 4. 在 Codex 中打开插件目录，从 "Local Plugins" 源安装插件
+# 4. 克隆本地插件（如 issue-flow）
+git clone https://github.com/obra/issue-flow.git ~/.codex/local-plugins/issue-flow
+
+# 5. 在 Codex 中打开插件目录，从 "Local Plugins" 源安装插件
 ```
 
 ## 更新配置
@@ -103,7 +106,7 @@ dot-code-agents/
 │   ├── AGENTS.md                 #   全局行为规则
 │   ├── config.toml               #   共享运行参数
 │   ├── memories/                 #   长期偏好模板
-│   └── local-plugins/            # 本地插件源码
+│   └── local-plugins/            # 本地插件说明
 ├── agents/                       # Codex agents 配置同步
 │   ├── README.md                 #   配置同步说明
 │   ├── setup.sh                  #   一键同步脚本
