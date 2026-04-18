@@ -111,17 +111,6 @@ main() {
     ln -s "$install_dir/codex" "$codex_dir"
     success "Codex 配置完成: $codex_dir → $install_dir/codex"
 
-    # 从模板创建本地配置
-    if [ -f "$install_dir/codex/config.toml.template" ]; then
-        if [ ! -f "$codex_dir/config.toml" ]; then
-            info "从模板创建本地配置..."
-            cp "$install_dir/codex/config.toml.template" "$codex_dir/config.toml"
-            success "本地配置已创建: $codex_dir/config.toml"
-        else
-            warn "本地配置已存在，跳过创建"
-        fi
-    fi
-
     # 同步 agents 配置
     header "同步 Codex Agents 配置"
     if [ -f "$install_dir/agents/setup.sh" ]; then
