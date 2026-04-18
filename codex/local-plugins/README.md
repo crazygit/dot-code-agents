@@ -12,7 +12,7 @@ Issue 驱动开发编排器，支持 GitHub Issue 的完整开发流程。
 
 ```bash
 # 克隆插件源码
-git clone https://github.com/obra/issue-flow.git ~/.codex/local-plugins/issue-flow
+git clone https://github.com/crazygit/issue-flow.git ~/.codex/local-plugins/issue-flow
 ```
 
 **配置 Marketplace:**
