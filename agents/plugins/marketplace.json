@@ -1,0 +1,20 @@
+{
+  "name": "codex-local-plugins",
+  "interface": {
+    "displayName": "Local Plugins"
+  },
+  "plugins": [
+    {
+      "name": "issue-flow",
+      "source": {
+        "source": "local",
+        "path": "./.codex/local-plugins/issue-flow"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

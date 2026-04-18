@@ -1,5 +1,6 @@
-# Versioned Codex baseline template.
-# Copy selected parts into ~/.codex/config.toml and adjust machine-local paths.
+# Versioned Codex baseline config.
+# This file contains configuration that can be shared across machines.
+# Local project trust levels are managed separately by Codex.
 
 personality = "pragmatic"
 web_search = "live"
@@ -19,3 +20,9 @@ notification_method = "auto"
 [notice.model_migrations]
 "gpt-5.3-codex" = "gpt-5.4"
 
+# 插件配置
+[plugins."github@openai-curated"]
+enabled = true
+
+[plugins."issue-flow@codex-local-plugins"]
+enabled = true
