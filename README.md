@@ -60,7 +60,7 @@ cd agents/
 ./setup.sh
 
 # 4. 克隆本地插件（如 issue-flow）
-git clone https://github.com/obra/issue-flow.git ~/.codex/local-plugins/issue-flow
+git clone https://github.com/crazygit/issue-flow.git ~/.codex/local-plugins/issue-flow
 
 # 5. 在 Codex 中打开插件目录，从 "Local Plugins" 源安装插件
 ```
